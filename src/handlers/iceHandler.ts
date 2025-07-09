@@ -1,0 +1,36 @@
+import { IdentifiedWebSocket } from "../types/socket";
+
+// used object rather then direct parameters to the function to not pass them as value
+// but pass them as reference
+export function iceHandler({
+  rooms,
+  message,
+  socket,
+  roomConnected,
+  clients,
+}: {
+  rooms: Map<string, Set<string>>;
+  message: any;
+  socket: IdentifiedWebSocket;
+  roomConnected: Map<string, string>;
+  clients: Map<string, IdentifiedWebSocket>;
+}) {
+  const roomId = roomConnected.get(socket.id);
+  if (!rooms.has(roomId + "")) {
+    throw new Error("room not found!");
+  }
+  const users = rooms.get(roomId + "") || new Set<string>();
+  for (const user of users) {
+    if (socket.id == user) {
+      continue;
+    }
+    const sendMessage = {
+      success: true,
+      type: message.type,
+      ice: message.ice,
+      senderId: socket.id,
+    };
+    const receiver = clients.get(user);
+    receiver?.send(JSON.stringify(sendMessage));
+  }
+}

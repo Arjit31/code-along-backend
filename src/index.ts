@@ -7,10 +7,13 @@ import { joinHandler } from "./handlers/joinHandler";
 import { offerHandler } from "./handlers/offerHandler";
 import { answerHandler } from "./handlers/answerHandler";
 import { iceHandler } from "./handlers/iceHandler";
+import cors from "cors"
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
+
+app.use(cors())
 
 const rooms = new Map<string, Set<string>>();
 const clients = new Map<string, IdentifiedWebSocket>();
@@ -69,6 +72,22 @@ wss.on("connection", function connection(socket: IdentifiedWebSocket) {
   });
   socket.send("something");
 });
+
+app.post("/create-room", function(req, res){
+  try {
+    const id = v4();
+    const users = new Set<string>();
+    rooms.set(id, users);
+    res.json({success: true, roomId: id, message: "room created!"});
+  } catch (error) {
+    console.log(error);
+    res.json({success: false, message: error});
+  }
+})
+
+app.get("/create-room", function(req, res){
+  res.json("check")
+})
 
 server.listen(3000, function () {
   console.log("Listening on http://localhost:3000");

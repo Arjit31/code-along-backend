@@ -30,11 +30,13 @@ export function joinHandler({
     roomConnected.set(socket.id, message.roomId);
     console.log(roomConnected);
   } else {
-    const users = new Set<string>();
-    users.add(socket.id);
-    rooms.set(message.roomId, users);
-    roomConnected.set(socket.id, message.roomId);
-    console.log(roomConnected);
+    const sendMessage = {
+      success: false,
+      message: "no such room exist!",
+    };
+    socket.send(JSON.stringify(sendMessage));
+    socket.terminate();
+    return;
   }
   const sendMessage = {
     success: true,

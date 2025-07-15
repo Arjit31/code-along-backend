@@ -7,11 +7,13 @@ export function joinHandler({
   message,
   socket,
   roomConnected,
+  clients,
 }: {
   rooms: Map<string, Set<string>>;
   message: any;
   socket: IdentifiedWebSocket;
   roomConnected: Map<string, string>;
+  clients: Map<string, IdentifiedWebSocket>;
 }) {
   if (rooms.has(message.roomId)) {
     const users = rooms.get(message.roomId) || new Set<string>();
@@ -28,6 +30,19 @@ export function joinHandler({
     users.add(socket.id);
     rooms.set(message.roomId, users);
     roomConnected.set(socket.id, message.roomId);
+    users.forEach((client) => {
+      console.log(socket.id, client, (client !== socket.id))
+      if (client !== socket.id) {
+        const sendMessage = {
+          success: true,
+          type: message.type,
+          receiverId: socket.id,
+        };
+        console.log(sendMessage)
+        const receiver = clients.get(client);
+        receiver?.send(JSON.stringify(sendMessage));
+      }
+    });
     console.log(roomConnected);
   } else {
     const sendMessage = {

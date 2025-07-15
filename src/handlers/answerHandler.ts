@@ -30,7 +30,7 @@ export function answerHandler({
     success: true,
     type: message.type,
     answer: message.answer,
-    receiver: message.receiver,
+    receiverId: receiverId,
   };
   const sender = clients.get(senderId);
   sender?.send(JSON.stringify(sendMessage));

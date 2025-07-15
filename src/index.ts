@@ -32,10 +32,10 @@ wss.on("connection", function connection(socket: IdentifiedWebSocket) {
     try {
       const message = JSON.parse(data.toString());
       console.log(message);
-      socket.send(data.toString());
+      // socket.send(data.toString());
 
       if (message.type === "join") {
-        joinHandler({ rooms, socket, message, roomConnected });
+        joinHandler({ rooms, socket, message, roomConnected, clients });
       } else if (message.type === "createOffer") {
         offerHandler({ rooms, socket, message, roomConnected, clients });
       } else if (message.type === "createAnswer") {
@@ -70,7 +70,7 @@ wss.on("connection", function connection(socket: IdentifiedWebSocket) {
     }
     console.log(`Client disconnected: ${socket.id}`);
   });
-  socket.send("something");
+  socket.send('{"message": "something"}');
 });
 
 app.post("/create-room", function(req, res){

@@ -19,18 +19,15 @@ export function offerHandler({
   if (!rooms.has(roomId + "")) {
     throw new Error("room not found!");
   }
-  const users = rooms.get(roomId + "") || new Set<string>();
-  for (const user of users) {
-    if (socket.id == user) {
-      continue;
-    }
-    const sendMessage = {
-      success: true,
-      type: message.type,
-      offer: message.offer,
-      senderId: socket.id,
-    };
-    const receiver = clients.get(user);
-    receiver?.send(JSON.stringify(sendMessage));
+  if (socket.id == message.receiverId) {
+    throw new Error("same sender!");
   }
+  const sendMessage = {
+    success: true,
+    type: message.type,
+    offer: message.offer,
+    senderId: socket.id,
+  };
+  const receiver = clients.get(message.receiverId);
+  receiver?.send(JSON.stringify(sendMessage));
 }

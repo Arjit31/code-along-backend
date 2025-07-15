@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/handlers/answerHandler.ts","./src/handlers/iceHandler.ts","./src/handlers/joinHandler.ts","./src/handlers/offerHandler.ts","./src/types/socket.ts"],"version":"5.8.2"}
+{"root":["./src/index.ts","./src/handlers/answerHandler.ts","./src/handlers/iceHandler.ts","./src/handlers/joinHandler.ts","./src/handlers/offerHandler.ts","./src/types/socket.ts"],"version":"5.8.3"}

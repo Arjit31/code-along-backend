@@ -57,7 +57,6 @@ wss.on("connection", function connection(socket: IdentifiedWebSocket) {
     socket.isAlive = true;
     try {
       const message = JSON.parse(data.toString());
-      console.log(message);
       // socket.send(data.toString());
 
       if (message.type === "join") {

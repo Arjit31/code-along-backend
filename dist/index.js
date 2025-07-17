@@ -23,10 +23,32 @@ wss.on("connection", function connection(socket) {
     const id = (0, uuid_1.v4)();
     socket.id = id;
     clients.set(id, socket);
+    socket.isAlive = true;
+    const startHeartbeat = () => {
+        socket.heartbeatTimer = setInterval(() => {
+            if (socket.isAlive === false) {
+                console.log("Client didn't respond to ping, terminating connection");
+                clearInterval(socket.heartbeatTimer);
+                return socket.terminate();
+            }
+            socket.isAlive = false;
+            socket.ping();
+            console.log("Ping sent to client");
+        }, 30000);
+    };
+    socket.on("pong", function () {
+        console.log("Pong received from client");
+        socket.isAlive = true;
+    });
+    socket.on("ping", function () {
+        console.log("Ping received from client");
+        socket.pong();
+    });
     socket.on("error", (error) => {
         console.log(error);
     });
     socket.on("message", function message(data) {
+        socket.isAlive = true;
         try {
             const message = JSON.parse(data.toString());
             console.log(message);
@@ -75,16 +97,20 @@ wss.on("connection", function connection(socket) {
                 users.forEach((userId) => {
                     const sendMessage = {
                         type: "close",
-                        senderId: socket.id
+                        senderId: socket.id,
                     };
                     const receiver = clients.get(userId);
                     receiver === null || receiver === void 0 ? void 0 : receiver.send(JSON.stringify(sendMessage));
                 });
             }
         }
+        if (socket.heartbeatTimer) {
+            clearInterval(socket.heartbeatTimer);
+        }
         console.log(`Client disconnected: ${socket.id}`);
     });
-    socket.send('{"message": "something"}');
+    startHeartbeat();
+    socket.send(`{"text": "connection established"}`);
 });
 app.post("/create-room", function (req, res) {
     try {

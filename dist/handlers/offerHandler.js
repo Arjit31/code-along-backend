@@ -16,6 +16,7 @@ function offerHandler({ rooms, message, socket, roomConnected, clients, }) {
         type: message.type,
         offer: message.offer,
         senderId: socket.id,
+        name: message.name
     };
     const receiver = clients.get(message.receiverId);
     receiver === null || receiver === void 0 ? void 0 : receiver.send(JSON.stringify(sendMessage));

@@ -15,6 +15,7 @@ export function joinHandler({
   roomConnected: Map<string, string>;
   clients: Map<string, IdentifiedWebSocket>;
 }) {
+  console.log(message);
   if (rooms.has(message.roomId)) {
     const users = rooms.get(message.roomId) || new Set<string>();
     console.log(users.size);

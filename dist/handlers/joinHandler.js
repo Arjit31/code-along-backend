@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.joinHandler = joinHandler;
 // used object rather then direct parameters to the function to not pass them as value
 // but pass them as reference
-function joinHandler({ rooms, message, socket, roomConnected, }) {
+function joinHandler({ rooms, message, socket, roomConnected, clients, }) {
     if (rooms.has(message.roomId)) {
         const users = rooms.get(message.roomId) || new Set();
         console.log(users.size);
@@ -19,6 +19,19 @@ function joinHandler({ rooms, message, socket, roomConnected, }) {
         users.add(socket.id);
         rooms.set(message.roomId, users);
         roomConnected.set(socket.id, message.roomId);
+        users.forEach((client) => {
+            console.log(socket.id, client, (client !== socket.id));
+            if (client !== socket.id) {
+                const sendMessage = {
+                    success: true,
+                    type: message.type,
+                    receiverId: socket.id,
+                };
+                console.log(sendMessage);
+                const receiver = clients.get(client);
+                receiver === null || receiver === void 0 ? void 0 : receiver.send(JSON.stringify(sendMessage));
+            }
+        });
         console.log(roomConnected);
     }
     else {

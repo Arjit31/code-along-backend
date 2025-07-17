@@ -8,18 +8,15 @@ function offerHandler({ rooms, message, socket, roomConnected, clients, }) {
     if (!rooms.has(roomId + "")) {
         throw new Error("room not found!");
     }
-    const users = rooms.get(roomId + "") || new Set();
-    for (const user of users) {
-        if (socket.id == user) {
-            continue;
-        }
-        const sendMessage = {
-            success: true,
-            type: message.type,
-            offer: message.offer,
-            senderId: socket.id,
-        };
-        const receiver = clients.get(user);
-        receiver === null || receiver === void 0 ? void 0 : receiver.send(JSON.stringify(sendMessage));
+    if (socket.id == message.receiverId) {
+        throw new Error("same sender!");
     }
+    const sendMessage = {
+        success: true,
+        type: message.type,
+        offer: message.offer,
+        senderId: socket.id,
+    };
+    const receiver = clients.get(message.receiverId);
+    receiver === null || receiver === void 0 ? void 0 : receiver.send(JSON.stringify(sendMessage));
 }

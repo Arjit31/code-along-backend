@@ -17,7 +17,7 @@ function answerHandler({ rooms, message, socket, roomConnected, clients, }) {
         success: true,
         type: message.type,
         answer: message.answer,
-        receiver: message.receiver,
+        receiverId: receiverId,
     };
     const sender = clients.get(senderId);
     sender === null || sender === void 0 ? void 0 : sender.send(JSON.stringify(sendMessage));

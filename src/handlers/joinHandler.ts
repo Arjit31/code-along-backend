@@ -37,6 +37,7 @@ export function joinHandler({
           success: true,
           type: message.type,
           receiverId: socket.id,
+          name: message.name
         };
         console.log(sendMessage)
         const receiver = clients.get(client);

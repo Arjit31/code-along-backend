@@ -27,6 +27,7 @@ export function offerHandler({
     type: message.type,
     offer: message.offer,
     senderId: socket.id,
+    name: message.name
   };
   const receiver = clients.get(message.receiverId);
   receiver?.send(JSON.stringify(sendMessage));

@@ -30,9 +30,9 @@ wss.on("connection", function connection(socket) {
         try {
             const message = JSON.parse(data.toString());
             console.log(message);
-            socket.send(data.toString());
+            // socket.send(data.toString());
             if (message.type === "join") {
-                (0, joinHandler_1.joinHandler)({ rooms, socket, message, roomConnected });
+                (0, joinHandler_1.joinHandler)({ rooms, socket, message, roomConnected, clients });
             }
             else if (message.type === "createOffer") {
                 (0, offerHandler_1.offerHandler)({ rooms, socket, message, roomConnected, clients });
@@ -63,16 +63,28 @@ wss.on("connection", function connection(socket) {
     });
     socket.on("close", () => {
         clients.delete(socket.id);
-        roomConnected.delete(socket.id);
         const roomId = roomConnected.get(socket.id);
+        roomConnected.delete(socket.id);
         if (roomId) {
             const users = rooms.get(roomId) || new Set();
             users === null || users === void 0 ? void 0 : users.delete(socket.id);
             rooms.set(roomId, users);
+            if (users.size === 0)
+                rooms.delete(roomId);
+            else {
+                users.forEach((userId) => {
+                    const sendMessage = {
+                        type: "close",
+                        senderId: socket.id
+                    };
+                    const receiver = clients.get(userId);
+                    receiver === null || receiver === void 0 ? void 0 : receiver.send(JSON.stringify(sendMessage));
+                });
+            }
         }
         console.log(`Client disconnected: ${socket.id}`);
     });
-    socket.send("something");
+    socket.send('{"message": "something"}');
 });
 app.post("/create-room", function (req, res) {
     try {

@@ -90,10 +90,12 @@ wss.on("connection", function connection(socket: IdentifiedWebSocket) {
     const roomId = roomConnected.get(socket.id);
     roomConnected.delete(socket.id);
     if (roomId) {
-      const users = rooms.get(roomId) || new Set<string>();
+      const users = rooms.get(roomId) as Set<string>;
       users.delete(socket.id);
       if (users.size === 0) {
         rooms.delete(roomId);
+        roomDocuments.delete(roomId);
+        roomVersions.delete(roomId);
       } else {
         rooms.set(roomId, users);
         users.forEach((userId: string) => {

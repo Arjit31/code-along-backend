@@ -8,12 +8,14 @@ export function joinHandler({
   socket,
   roomConnected,
   clients,
+  roomDocuments
 }: {
   rooms: Map<string, Set<string>>;
   message: any;
   socket: IdentifiedWebSocket;
   roomConnected: Map<string, string>;
   clients: Map<string, IdentifiedWebSocket>;
+  roomDocuments: Map<string, string>;
 }) {
   console.log(message);
   if (rooms.has(message.roomId)) {
@@ -32,19 +34,27 @@ export function joinHandler({
     rooms.set(message.roomId, users);
     roomConnected.set(socket.id, message.roomId);
     users.forEach((client) => {
-      console.log(socket.id, client, (client !== socket.id))
+      console.log(socket.id, client, client !== socket.id);
       if (client !== socket.id) {
         const sendMessage = {
           success: true,
           type: message.type,
           receiverId: socket.id,
-          name: message.name
+          name: message.name,
         };
-        console.log(sendMessage)
+        console.log(sendMessage);
         const receiver = clients.get(client);
         receiver?.send(JSON.stringify(sendMessage));
       }
     });
+    const docContent = roomDocuments.get(message.roomId) || "";
+    socket.send(
+      JSON.stringify({
+        type: "docUpdate",
+        senderId: "server",
+        content: docContent,
+      })
+    );
     console.log(roomConnected);
   } else {
     const sendMessage = {

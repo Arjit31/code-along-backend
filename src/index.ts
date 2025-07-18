@@ -9,6 +9,7 @@ import { answerHandler } from "./handlers/answerHandler";
 import { iceHandler } from "./handlers/iceHandler";
 import cors from "cors";
 import { docHandler } from "./handlers/docHandler";
+import { demandHandler } from "./handlers/demandHandler";
 
 const app = express();
 const server = http.createServer(app);
@@ -71,6 +72,8 @@ wss.on("connection", function connection(socket: IdentifiedWebSocket) {
         iceHandler({ rooms, socket, message, roomConnected, clients });
       } else if (message.type === "docUpdate") {
         docHandler({ rooms, socket, message, roomConnected, clients, roomDocuments, roomVersions});
+      } else if(message.type === "demandDoc") {
+        demandHandler({ rooms, socket, message, roomConnected, clients, roomDocuments, roomVersions});
       }
     } catch (error) {
       console.log(error);

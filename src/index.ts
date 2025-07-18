@@ -20,6 +20,7 @@ const rooms = new Map<string, Set<string>>();
 const clients = new Map<string, IdentifiedWebSocket>();
 const roomConnected = new Map<string, string>();
 const roomDocuments = new Map<string, string>();
+const roomVersions = new Map<string, number>();
 
 wss.on("connection", function connection(socket: IdentifiedWebSocket) {
   const id = v4();
@@ -69,7 +70,7 @@ wss.on("connection", function connection(socket: IdentifiedWebSocket) {
       } else if (message.type === "iceCandidate") {
         iceHandler({ rooms, socket, message, roomConnected, clients });
       } else if (message.type === "docUpdate") {
-        docHandler({ rooms, socket, message, roomConnected, clients, roomDocuments });
+        docHandler({ rooms, socket, message, roomConnected, clients, roomDocuments, roomVersions});
       }
     } catch (error) {
       console.log(error);

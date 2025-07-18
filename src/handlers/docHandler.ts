@@ -8,7 +8,8 @@ export function docHandler({
   socket,
   roomConnected,
   clients,
-  roomDocuments
+  roomDocuments,
+  roomVersions
 }: {
   rooms: Map<string, Set<string>>;
   message: any;
@@ -16,26 +17,26 @@ export function docHandler({
   roomConnected: Map<string, string>;
   clients: Map<string, IdentifiedWebSocket>;
   roomDocuments: Map<string, string>;
+  roomVersions: Map<string, number>;
 }) {
   const roomId = roomConnected.get(socket.id);
   if (!roomId) return;
   const users = rooms.get(roomId);
   if (!users) return;
 
-  // Save document content for the room
   roomDocuments.set(roomId, message.content);
-
-  // Broadcast to all other users in the room
+  const newVersion = (roomVersions.get(roomId) || 0) + 1;
+  roomVersions.set(roomId, newVersion);
+  
   users.forEach((userId) => {
-    if (userId !== socket.id) {
       const receiver = clients.get(userId);
       receiver?.send(
         JSON.stringify({
           type: "docUpdate",
           senderId: socket.id,
           content: message.content,
+          version: newVersion,
         })
       );
-    }
   });
 }

@@ -14,10 +14,12 @@
   "dependencies": {
     "@teamwork/websocket-json-stream": "^2.0.0",
     "@types/cors": "^2.8.19",
+    "@types/diff-match-patch": "^1.0.36",
     "@types/express": "^5.0.3",
     "@types/sharedb": "^5.1.0",
     "@types/ws": "^8.18.1",
     "cors": "^2.8.5",
+    "diff-match-patch": "^1.0.5",
     "express": "^5.1.0",
     "sharedb": "^5.2.2",
     "uuid": "^11.1.0",
